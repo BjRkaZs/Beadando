@@ -1,28 +1,30 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Department;
+use App\Http\Resources\DepartmentResource;
 
 class DepartmentController extends Controller
 {
-    public function getDepartments(){
-
+    public function getDepartments()
+    {
+        $department = Department::all();
+        return response()->json($department);
     }
 
-    public function searchDepartment(Request $request){
-
-    }
-
-    public function addDepartment(Request $request){
-
-    }
-
-    public function updateDepartment(Request $request){
-
-    }
+    public function getDepartmentId($DepartmentId)
+    {
+        $department = Department::where("department", $DepartmentId)->first();
     
-    public function deleteDepartment(Request $request){
-
+        if (!$department) {
+            return response()->json([
+                'error' => 'Department not found'
+            ], 404);
+        }
+    
+        return $department->id;
     }
 }

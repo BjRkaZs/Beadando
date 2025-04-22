@@ -3,39 +3,54 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+
+use App\Http\Controllers\ResponseController;
 use Illuminate\Http\Request;
 use App\Models\Worker;
+use App\Models\City;
+use App\Models\Department;
+use App\Models\Position;
 
-class WorkerController extends Controller
+
+class WorkerController extends ResponseController
 {
     public function getWorkers()
     {
-        $workers = Worker::all();
+        $workers = Worker::with("department", "position", "city")->get();
         return response()->json($workers);
     }
+    
 
     public function searchWorker(Request $request)
     {
-        $worker = Worker::find($request->id);
+        $worker = Worker::where( "name", $request["name"] )->first();
 
-        if (!$worker) {
-            return response()->json(['message' => 'Worker not found'], 404);
+        if( !$worker ){
+
+            return $this->sendError( "Nincs ilyen dolgozó" );
         }
 
-        return response()->json($worker);
+        return $this->sendResponse( $worker, "Sikeres olvasás");
     }
+
 
     public function addWorker(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'salary' => 'required|numeric|min:0',
+        $worker = new Worker;
+        $worker->name = $request["name"];
+        $worker->birthdate = $request["birthdate"];
+        $worker->city_id = $request["city"];
+        $worker->phonenumber = $request["phonenumber"];
+        $worker->salary = $request["salary"];
+        $worker->department_id = $request["department"];
+        $worker->position_id = $request["position"];
+        $worker->save();
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Dolgozó sikeresen hozzáadva',
+            'data' => $worker,
         ]);
-
-        $worker = Worker::create($validatedData);
-
-        return response()->json(['message' => 'Worker added successfully', 'worker' => $worker], 201);
     }
 
 

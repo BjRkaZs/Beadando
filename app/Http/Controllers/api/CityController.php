@@ -1,28 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
 use Illuminate\Http\Request;
+use App\Models\City;
+use App\Http\Resources\CityResource;
+use App\Http\Controllers\Controller;
 
 class CityController extends Controller
 {
-    public function getCities(){
-
+    public function getCities()
+    {
+        $city = City::all();
+        return response()->json($city);
     }
 
-    public function searchCity(Request $request){
-
-    }
-
-    public function addCity(Request $request){
-
-    }
-
-    public function updateCity(Request $request){
-
-    }
-    
-    public function deleteCity(Request $request){
-
+    public function getCityId($CityName)
+    {
+        $city = City::where("city", $CityName)->first();
+        return $city ? $city->id : null;
     }
 }

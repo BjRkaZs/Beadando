@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phonenumber');
             $table->integer('salary');
             $table->foreignId('department_id');
-            $table->foreignId('speciality_id');
+            $table->foreignId('position_id');
         });
     }
 
